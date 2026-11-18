@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#2f6b3a">
+<title>Orçamento Serrana</title>
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="icon-192.png">
+<style>
+:root{--bg:#f5f6f2;--card:#fff;--ink:#1d2a1f;--muted:#6b7568;--line:#e2e5dd;--green:#2f6b3a;--green-d:#24552d;--green-l:#e6f0e6;--warn:#b5521f;--warn-l:#fbeee6;--blue-l:#e8eff8}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+header{background:var(--green);color:#fff;padding:calc(12px + env(safe-area-inset-top)) 16px 12px}
+header .wrap{display:flex;align-items:center;gap:10px}
+header h1{margin:0;font-size:18px;font-weight:650}
+header p{margin:2px 0 0;font-size:12.5px;opacity:.85}
+header .grow{flex:1;min-width:0}
+header button{border:1px solid rgba(255,255,255,.4);background:none;color:#fff;border-radius:8px;padding:6px 10px;font:inherit;font-size:13px;cursor:pointer}
+.wrap{max-width:720px;margin:0 auto}
+.hidden{display:none!important}
+.center{min-height:70vh;display:flex;align-items:center;justify-content:center;padding:24px}
+.box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;max-width:380px;width:100%;text-align:center}
+.box h2{margin:0 0 8px;font-size:20px}
+.box p{color:var(--muted);margin:0 0 16px}
+label.f{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
+input[type=text],input[type=email],input[type=search],input[type=number],textarea{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:10px;font:inherit;background:#fff;color:var(--ink)}
+input:focus,textarea:focus{outline:2px solid var(--green);outline-offset:-1px;border-color:transparent}
+textarea{min-height:70px;resize:vertical}
+.top{padding:12px 16px 4px}
+.row2{display:grid;grid-template-columns:1fr 150px;gap:10px}
+.seg{display:flex;background:#fff;border:1px solid var(--line);border-radius:10px;padding:3px}
+.seg button{flex:1;border:0;background:none;padding:8px;border-radius:8px;font:inherit;color:var(--muted);cursor:pointer}
+.seg button.on{background:var(--green);color:#fff;font-weight:600}
+.tabs{display:flex;gap:4px;padding:8px 16px 0;position:sticky;top:0;background:var(--bg);z-index:5}
+.tabs button{flex:1;border:0;border-bottom:3px solid transparent;background:none;padding:10px 4px;font:inherit;font-weight:600;color:var(--muted);cursor:pointer}
+.tabs button.on{color:var(--green);border-bottom-color:var(--green)}
+.badge{display:inline-block;min-width:20px;padding:0 6px;border-radius:10px;background:var(--green);color:#fff;font-size:12px;margin-left:4px}
+.chips{display:flex;gap:6px;overflow-x:auto;padding:10px 16px 4px;scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;border:1px solid var(--line);background:#fff;border-radius:999px;padding:6px 12px;font:inherit;font-size:13px;color:var(--ink);cursor:pointer}
+.chip.on{background:var(--green-l);border-color:var(--green);color:var(--green-d);font-weight:600}
+.list{padding:6px 16px 130px}
+.item{display:flex;align-items:center;gap:10px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:8px}
+.item .pinfo{flex:1;min-width:0}
+.name{font-weight:550}
+.meta,.small{font-size:12px;color:var(--muted)}
+.dsc{font-size:12px;color:var(--green);font-weight:600}
+.price{font-weight:650;white-space:nowrap}
+.add{flex:none;width:40px;height:40px;border-radius:10px;border:0;background:var(--green);color:#fff;font-size:22px;line-height:1;cursor:pointer}
+.add.in{background:var(--green-l);color:var(--green-d);font-size:14px;font-weight:700}
+.empty{text-align:center;color:var(--muted);padding:30px 10px}
+.more{text-align:center;color:var(--muted);font-size:13px;padding:6px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:10px}
+.card h3{margin:0 0 4px;font-size:16px}
+.qi .hd{display:flex;gap:8px;align-items:flex-start}
+.qi .hd .name{flex:1}
+.x{border:0;background:none;color:var(--muted);font-size:22px;line-height:1;cursor:pointer;padding:0 4px}
+.ctl{display:grid;grid-template-columns:auto 1fr;gap:8px 12px;align-items:center;margin-top:10px}
+.stepper{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.stepper button{width:36px;height:38px;border:0;background:#fafbf8;font-size:18px;cursor:pointer;color:var(--ink)}
+.stepper input{width:60px;border:0;border-radius:0;text-align:center;padding:8px 2px}
+.stepper input:focus{outline:none}
+.desc{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.desc input{width:96px;padding:8px 10px}
+.sub{display:flex;justify-content:space-between;margin-top:10px;padding-top:8px;border-top:1px dashed var(--line)}
+.sub b{font-size:16px}
+.warn{color:var(--warn)}
+.totals div{display:flex;justify-content:space-between;padding:3px 0}
+.totals .big{font-size:20px;font-weight:700;color:var(--green-d);border-top:1px solid var(--line);margin-top:6px;padding-top:8px}
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.btn{display:block;width:100%;text-align:center;border:0;border-radius:10px;padding:12px;font:inherit;font-weight:600;cursor:pointer;text-decoration:none}
+.btn.pri{background:var(--green);color:#fff}
+.btn.sec{background:#fff;border:1px solid var(--line);color:var(--ink)}
+.btn.danger{background:#fff;color:var(--warn);border:1px solid #efd3c4}
+.btn.full{grid-column:1/-1}
+.btn:disabled{opacity:.5;cursor:default}
+.btn.google{background:#fff;border:1px solid var(--line);color:var(--ink);display:flex;align-items:center;justify-content:center;gap:10px}
+.bar{position:fixed;left:0;right:0;bottom:0;background:var(--green-d);color:#fff;z-index:10}
+.bar .wrap{display:flex;align-items:center;justify-content:space-between;padding:12px 16px calc(12px + env(safe-area-inset-bottom))}
+.bar button{border:0;background:#fff;color:var(--green-d);font:inherit;font-weight:700;padding:9px 14px;border-radius:10px;cursor:pointer}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#222;color:#fff;padding:8px 14px;border-radius:8px;font-size:13px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:30;max-width:90vw;text-align:center}
+.toast.show{opacity:1}
+.aviso{background:var(--warn-l);color:#6a3412;border-radius:10px;padding:10px 12px;margin:10px 16px 0;font-size:13px}
+.info{background:var(--blue-l);border-radius:10px;padding:10px 12px;font-size:13px}
+.check{display:flex;align-items:center;gap:8px;margin:8px 0;font-size:14px}
+.check input{width:20px;height:20px;accent-color:var(--green)}
+.pessoa{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}
+.pessoa:first-child{border-top:0}
+.pessoa .info2{flex:1;min-width:0;overflow-wrap:anywhere}
+.tag{display:inline-block;font-size:11px;border-radius:6px;padding:1px 6px;margin-right:4px;background:var(--green-l);color:var(--green-d)}
+.tag.off{background:var(--warn-l);color:var(--warn)}
+.mini{border:1px solid var(--line);background:#fff;border-radius:8px;padding:6px 8px;font:inherit;font-size:12.5px;cursor:pointer;color:var(--ink)}
+.mini.red{color:var(--warn);border-color:#efd3c4}
+.diff{max-height:260px;overflow:auto;font-size:13px;border:1px solid var(--line);border-radius:10px;padding:8px 10px;margin:8px 0}
+.diff h4{margin:8px 0 4px;font-size:13px}
+.diff div{padding:2px 0}
+.up{color:var(--warn)}.down{color:var(--green)}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <div class="grow"><h1>Orçamento Serrana</h1><p id="tabinfo">Carregando…</p></div>
+  <button id="sair" class="hidden">Sair</button>
+</div></header>
+
+<!-- Telas de entrada -->
+<div id="telaCarregando" class="center"><div class="box"><p>Carregando…</p></div></div>
+
+<div id="telaLogin" class="center hidden"><div class="box">
+  <h2>Entrar</h2>
+  <p>Use a conta Google que foi liberada para você.</p>
+  <button class="btn google" id="entrar"><svg width="18" height="18" viewBox="0 0 48 48"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.5l6.7-6.7C35.6 2.4 30.2 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.8 6C12.4 13.6 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.5 5.8c4.4-4.1 7.1-10.1 7.1-17.5z"/><path fill="#FBBC05" d="M10.5 28.7c-.5-1.4-.8-3-.8-4.7s.3-3.3.8-4.7l-7.8-6C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.8-6z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.5-5.8c-2.1 1.4-4.8 2.3-8.4 2.3-6.3 0-11.6-4.1-13.5-9.8l-7.8 6C6.6 42.6 14.6 48 24 48z"/></svg>Entrar com Google</button>
+  <p class="small" id="loginErro" style="margin-top:12px"></p>
+</div></div>
+
+<div id="telaBloqueio" class="center hidden"><div class="box">
+  <h2 id="bloqTitulo">Acesso não liberado</h2>
+  <p id="bloqTexto"></p>
+  <button class="btn sec" id="bloqSair">Entrar com outra conta</button>
+</div></div>
+
+<!-- App -->
+<div id="telaApp" class="hidden">
+  <div id="avisoOffline" class="aviso hidden"></div>
+  <div class="wrap">
+    <div class="top">
+      <div class="row2">
+        <div><label class="f" for="cliente">Cliente</label><input id="cliente" type="text" placeholder="Nome do cliente"></div>
+        <div><label class="f">Prazo</label>
+          <div class="seg" id="prazo"><button data-p="30" class="on">30 dias</button><button data-p="60">60 dias</button></div></div>
+      </div>
+    </div>
+    <div class="tabs">
+      <button data-tab="prod" class="on">Produtos</button>
+      <button data-tab="orc">Orçamento<span class="badge" id="nItens">0</span></button>
+      <button data-tab="painel" id="tabPainel" class="hidden">Painel</button>
+    </div>
+
+    <section id="vProd">
+      <div style="padding:10px 16px 0"><input id="busca" type="search" placeholder="Buscar produto ou código…" autocomplete="off"></div>
+      <div class="chips" id="cats"></div>
+      <div class="list" id="lista"></div>
+    </section>
+
+    <section id="vOrc" class="hidden"><div class="list" id="orc"></div></section>
+
+    <section id="vPainel" class="hidden"><div class="list">
+      <div class="card" id="cardTabela">
+        <h3>Tabela de preços</h3>
+        <div class="small" id="tabStatus"></div>
+        <div style="margin-top:12px"><label class="btn pri" for="arqTabela">Subir tabela nova (PDF)</label>
+          <input type="file" id="arqTabela" accept="application/pdf,.pdf,.json,application/json" class="hidden"></div>
+        <div id="preTabela" class="hidden" style="margin-top:12px"></div>
+      </div>
+
+      <div class="card" id="cardPessoas">
+        <h3>Liberar acesso</h3>
+        <label class="f" for="pEmail" style="margin-top:8px">E-mail Google da pessoa</label>
+        <input id="pEmail" type="email" inputmode="email" autocapitalize="off" placeholder="nome@gmail.com">
+        <label class="f" for="pNome" style="margin-top:8px">Nome</label>
+        <input id="pNome" type="text" placeholder="Nome da pessoa">
+        <label class="check"><input type="checkbox" id="pAtivo" checked> Ativo</label>
+        <label class="check"><input type="checkbox" id="pTabela"> Pode subir tabela</label>
+        <button class="btn pri" id="pSalvar">Salvar acesso</button>
+        <h3 style="margin-top:18px">Pessoas</h3>
+        <div id="pessoas" class="small">Carregando…</div>
+      </div>
+    </div></section>
+  </div>
+
+  <div class="bar" id="bar"><div class="wrap">
+    <div><div class="small" style="color:#cfe3d2" id="barQ">Nenhum item</div><div style="font-weight:700;font-size:18px" id="barT">R$ 0,00</div></div>
+    <button id="barBtn">Ver orçamento</button>
+  </div></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script type="module" src="app.js"></script>
+<script>
+if ('serviceWorker' in navigator) navigator.serviceWorker.register('sw.js').catch(()=>{});
+</script>
+</body>
+</html>
