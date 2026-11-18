@@ -1,5 +1,5 @@
 // Guarda o app no aparelho para funcionar sem internet
-const VERSAO = 'orc-v1';
+const VERSAO = 'orc-v3';
 const ARQUIVOS = ['./', 'index.html', 'app.js', 'tabela-pdf.js', 'config.js', 'manifest.json', 'icon-192.png', 'icon-512.png'];
 const FB = 'https://www.gstatic.com/firebasejs/10.12.2/';
 const EXTERNOS = [FB + 'firebase-app.js', FB + 'firebase-auth.js', FB + 'firebase-firestore.js'];

@@ -1,4 +1,4 @@
-import { firebaseConfig, ADMIN_EMAIL, EMPRESA, DIAS_OFFLINE } from './config.js';
+import { firebaseConfig, ADMIN_EMAIL, EMPRESA, DIAS_OFFLINE, GOOGLE_CLIENT_ID } from './config.js';
 import { lerTabelaPdf } from './tabela-pdf.js';
 
 const FB = 'https://www.gstatic.com/firebasejs/10.12.2/';
@@ -43,7 +43,7 @@ async function iniciar() {
       import(FB + 'firebase-app.js'), import(FB + 'firebase-auth.js'), import(FB + 'firebase-firestore.js')
     ]);
     const a = app.initializeApp(firebaseConfig);
-    fb = { auth: auth.getAuth(a), db: fs.getFirestore(a), A: auth, F: fs };
+    fb = { auth: auth.initializeAuth(a, { persistence: [auth.indexedDBLocalPersistence, auth.browserLocalPersistence] }), db: fs.getFirestore(a), A: auth, F: fs };
   } catch (e) {
     // Sem internet e sem os arquivos do Firebase guardados: usa o que está no aparelho
     return usarCache('Sem internet. Usando a tabela guardada no aparelho.');
@@ -51,7 +51,7 @@ async function iniciar() {
   fb.A.onAuthStateChanged(fb.auth, async u => {
     if (!u) {
       if (!navigator.onLine && cacheValido()) return usarCache('Sem internet. Usando a tabela guardada no aparelho.');
-      return tela('telaLogin');
+      return mostrarLogin();
     }
     await verificar(u);
   });
@@ -239,24 +239,39 @@ $('orc').addEventListener('change', e => {
 $('orc').addEventListener('input', e => { if (e.target.id === 'obs') { st.obs = e.target.value; salvarRascunho(); atualizaWpp(); } });
 
 // ---------- login ----------
-$('entrar').onclick = async () => {
+// Login com o botão oficial do Google (não depende da janela do firebaseapp.com)
+let gisPronto = null;
+function carregarGIS() {
+  if (gisPronto) return gisPronto;
+  gisPronto = new Promise((ok, erro) => {
+    const sc = document.createElement('script'); sc.src = 'https://accounts.google.com/gsi/client'; sc.async = true;
+    sc.onload = () => ok(); sc.onerror = () => { gisPronto = null; erro(new Error('gis')); };
+    document.head.appendChild(sc);
+  });
+  return gisPronto;
+}
+async function mostrarLogin() {
+  $('tabinfo').textContent = 'Entre para continuar';
+  tela('telaLogin');
   $('loginErro').textContent = '';
-  if (!fb) return;
-  const prov = new fb.A.GoogleAuthProvider();
-  prov.setCustomParameters({ prompt: 'select_account' });
-  try { await fb.A.signInWithPopup(fb.auth, prov); }
-  catch (e) {
-    if (e.code === 'auth/popup-blocked' || e.code === 'auth/operation-not-supported-in-this-environment') {
-      try { await fb.A.signInWithRedirect(fb.auth, prov); } catch (e2) { $('loginErro').textContent = 'Não foi possível entrar: ' + e2.code; }
-    } else if (e.code !== 'auth/popup-closed-by-user' && e.code !== 'auth/cancelled-popup-request') {
-      $('loginErro').textContent = navigator.onLine ? 'Não foi possível entrar: ' + e.code : 'Sem internet. Conecte para entrar.';
+  if (!navigator.onLine) { $('loginErro').textContent = 'Para entrar a primeira vez é preciso internet.'; return; }
+  try { await carregarGIS(); } catch (e) { $('loginErro').textContent = 'Não foi possível carregar o login do Google. Confira a internet e abra de novo.'; return; }
+  google.accounts.id.initialize({
+    client_id: GOOGLE_CLIENT_ID, auto_select: false, cancel_on_tap_outside: true,
+    callback: async resp => {
+      $('loginErro').textContent = 'Entrando…';
+      try { await fb.A.signInWithCredential(fb.auth, fb.A.GoogleAuthProvider.credential(resp.credential)); }
+      catch (e) { $('loginErro').textContent = 'Não foi possível entrar (' + (e.code || e.message) + '). Tente de novo.'; }
     }
-  }
-};
+  });
+  $('gbtn').innerHTML = '';
+  google.accounts.id.renderButton($('gbtn'), { theme: 'filled_blue', size: 'large', text: 'signin_with', shape: 'pill', locale: 'pt-BR', width: 260 });
+}
 async function sairConta() {
   ls.del('orc.cache'); cache = null; usuario = null;
+  try { window.google && google.accounts && google.accounts.id.disableAutoSelect(); } catch (e) {}
   if (fb) { try { await fb.A.signOut(fb.auth); } catch (e) {} }
-  tela('telaLogin');
+  mostrarLogin();
 }
 $('sair').onclick = sairConta;
 $('bloqSair').onclick = sairConta;

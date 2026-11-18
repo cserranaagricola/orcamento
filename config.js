@@ -9,6 +9,9 @@ export const firebaseConfig = {
   appId: "1:924123518873:web:22c69111b893fe34b9e508"
 };
 
+// ID do cliente Google (login com o botão oficial do Google)
+export const GOOGLE_CLIENT_ID = "924123518873-d3v5djlch5fmqrddgk9hu843hno6gl2o.apps.googleusercontent.com";
+
 // Conta administradora (libera pessoas e sobe tabelas)
 export const ADMIN_EMAIL = "cserranaagricola@gmail.com";
 
